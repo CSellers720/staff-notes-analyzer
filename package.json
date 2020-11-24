@@ -1,0 +1,22 @@
+{
+  "name": "staff-notes-analyzer",
+  "version": "1.0.0",
+  "description": "Pulls useful data from staff notes csv",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CSellers720/staff-notes-analyzer.git"
+  },
+  "author": "Charlie Sellers, Andrew Yoder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CSellers720/staff-notes-analyzer/issues"
+  },
+  "homepage": "https://github.com/CSellers720/staff-notes-analyzer#readme",
+  "dependencies": {
+    "node": "^15.2.1"
+  }
+}
