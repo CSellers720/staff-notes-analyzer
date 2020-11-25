@@ -2,6 +2,9 @@ const path = require('path');
 const fs = require('fs');
 
 const week = /^W02/;
+const maxTagsInSprint = 5;
+const maxTagsInTags = 10;
+
 var outputObj = { tags: [] };
 
 fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
@@ -15,6 +18,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
         sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
       }
     }
+    sortOutput(outputObj);
     console.log(outputObj);
   })
   .catch((err) => {
@@ -47,6 +51,25 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
       } else {
         //create new sprint object with total prop = 1
         object[sprint] = [{ name: tag, total: 1 }];
+      }
+    }
+  }
+
+  const sortOutput = (object) => {
+    //iterate through all properties
+    for (const key in object) {
+      //run sort on each array
+      object[key].sort((a, b) => {
+        // console.log('a.name', a.name, 'a.total: ', a.total);
+        // console.log('b.name', b.name, 'b.total: ', b.total);
+        // console.log('compare: ', a.total > b.total);
+        return b.total - a.total;
+      });
+      //set array length
+      if(key === 'tags') {
+        object[key].length = (object[key].length < maxTagsInTags) ? object[key].length : maxTagsInTags;
+      } else {
+        object[key].length = (object[key].length < maxTagsInSprint) ? object[key].length : maxTagsInSprint;
       }
     }
   }
@@ -118,7 +141,8 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
 // }
 
 // sprintUpsert(testObj3, 'Orientation and Precourse Review', ['git']);
-// console.log('testObj3 ', testObj3);
+// sortOutput(testObj3);
+//console.log('testObj3 ', testObj3);
 
 
 /*
