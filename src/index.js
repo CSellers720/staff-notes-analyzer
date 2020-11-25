@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const tagUpsert = require('./tagUpsert.js');
 
 const week = /^W02/;
 var outputObj = {};
@@ -13,74 +12,72 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
       const newRow = allResults[i].split('\t');
       //check if the row's week matches const week
       if(newRow[4].search(week) !== -1) {
-        //if so, check for sprint within week object
-          //if sprint doesn't exist, create it
+        sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
       }
-
-        //check to see if tagName exists in sprint object
-          //if so, add 1 to total
-          //else create tag object with total of 1
     }
+    console.log(outputObj);
   })
   .catch((err) => {
     console.log('an error occurred ', err);
   });
 
-  const sprintUpsert = (object, sprint, tag) => {
-    //check to see if sprint is key of object
-    if(object[sprint]) {
-      //if yes, check if tag is a key of sprint
-      if(object[sprint][tag]) {
-        //if yes, total++
-        object[sprint][tag].total++;
+  const sprintUpsert = (object, sprint, tags) => {
+    for (tag of tags) {
+      //check to see if sprint is key of object
+      if(object[sprint]) {
+        //if yes, check if tag is a key of sprint
+        if(object[sprint][tag]) {
+          //if yes, total++
+          object[sprint][tag].total++;
+        } else {
+          //if not, create it with tag object with total of 1
+          object[sprint][tag] = { total: 1 };
+        }
       } else {
-        //if not, create it with tag object with total of 1
+        //create new sprint object with total prop = 1
+        object[sprint] = {};
         object[sprint][tag] = { total: 1 };
       }
-    } else {
-      //create new sprint object with total prop = 1
-      object[sprint] = {};
-      object[sprint][tag] = { total: 1 };
     }
   }
 
-var test = [
-  '\n5/11/2020 11:42:52',
-  'mariah.tato@galvanize.com',
-  'Nicolas Yarosz',
-  'Warner Lin',
-  'W01D1',
-  'Help Desk Request',
-  'Nicolas',
-  'Technical issue with Nic only. ',
-  "Nic accidentally added himself as a remote pair. Told them to try a quick google search to solve issue, didn't work so I suggested they delete and reclone their repos and try again to not waste time google searching. ",
-  'Green',
-  'Orientation and Precourse Review',
-  '',
-  'git'
-];
+// var test = [
+//   '\n5/11/2020 11:42:52',
+//   'mariah.tato@galvanize.com',
+//   'Nicolas Yarosz',
+//   'Warner Lin',
+//   'W01D1',
+//   'Help Desk Request',
+//   'Nicolas',
+//   'Technical issue with Nic only. ',
+//   "Nic accidentally added himself as a remote pair. Told them to try a quick google search to solve issue, didn't work so I suggested they delete and reclone their repos and try again to not waste time google searching. ",
+//   'Green',
+//   'Orientation and Precourse Review',
+//   '',
+//   'git'
+// ];
 
-var testObj1 = {};
-sprintUpsert(testObj1, 'Orientation and Precourse Review', 'git');
-console.log('testObj1 ', testObj1);
+// var testObj1 = {};
+// sprintUpsert(testObj1, 'Orientation and Precourse Review', 'git');
+// console.log('testObj1 ', testObj1);
 
-var testObj2 = {
-  'Orientation and Precourse Review': {}
-};
-sprintUpsert(testObj2, 'Orientation and Precourse Review', 'git');
-console.log('testObj2 ', testObj2);
+// var testObj2 = {
+//   'Orientation and Precourse Review': {}
+// };
+// sprintUpsert(testObj2, 'Orientation and Precourse Review', 'git');
+// console.log('testObj2 ', testObj2);
 
 
-var testObj3 = {
-  'Orientation and Precourse Review': {
-    'git': {
-      total: 1
-    }
-  }
-}
+// var testObj3 = {
+//   'Orientation and Precourse Review': {
+//     'git': {
+//       total: 1
+//     }
+//   }
+// }
 
-sprintUpsert(testObj3, 'Orientation and Precourse Review', 'git');
-console.log('testObj3 ', testObj3);
+// sprintUpsert(testObj3, 'Orientation and Precourse Review', 'git');
+// console.log('testObj3 ', testObj3);
 
 
 /*
