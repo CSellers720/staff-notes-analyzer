@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const week = /^W02/;
-var outputObj = {};
+var outputObj = { tags: [] };
 
 fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   .then((results) => {
@@ -25,21 +25,51 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     for (tag of tags) {
       //check to see if sprint is key of object
       if(object[sprint]) {
-        //if yes, check if tag is a key of sprint
-        if(object[sprint][tag]) {
+        //if yes, check if tag exists in the sprint array
+        const tagIndex = object[sprint].findIndex((el) => el.name === tag);
+        if(tagIndex !== -1) {
           //if yes, total++
-          object[sprint][tag].total++;
+          object[sprint][tagIndex].total++;
         } else {
           //if not, create it with tag object with total of 1
-          object[sprint][tag] = { total: 1 };
+          object[sprint].push({ name: tag, total: 1 });
         }
       } else {
         //create new sprint object with total prop = 1
-        object[sprint] = {};
-        object[sprint][tag] = { total: 1 };
+        object[sprint] = [{ name: tag, total: 1 }];
       }
     }
   }
+
+  /*
+  outputObj = {
+    tags: [
+      {
+        name: tag1,
+        total: 5
+      },
+      {
+        name: tag2,
+        total: 2
+      }
+    ],
+    sprint1: [
+      {
+        name: tag1,
+        total: 15
+      },
+      {
+        name: tag2,
+        total: 10
+      }
+    ],
+    sprint2: [ ** ]
+}*/
+
+// break out totals for each tag in the tags object
+// Helper Fn: determine the top 5 tags
+  // create a temp array
+  // iterate through the tags object
 
 // var test = [
 //   '\n5/11/2020 11:42:52',
@@ -58,25 +88,26 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
 // ];
 
 // var testObj1 = {};
-// sprintUpsert(testObj1, 'Orientation and Precourse Review', 'git');
+// sprintUpsert(testObj1, 'Orientation and Precourse Review', ['git']);
 // console.log('testObj1 ', testObj1);
 
 // var testObj2 = {
-//   'Orientation and Precourse Review': {}
+//   'Orientation and Precourse Review': []
 // };
-// sprintUpsert(testObj2, 'Orientation and Precourse Review', 'git');
+// sprintUpsert(testObj2, 'Orientation and Precourse Review', ['git']);
 // console.log('testObj2 ', testObj2);
 
 
 // var testObj3 = {
-//   'Orientation and Precourse Review': {
-//     'git': {
-//       total: 1
+//   'Orientation and Precourse Review': [
+//     {
+//       name: 'git',
+//       total: 2
 //     }
-//   }
+//   ]
 // }
 
-// sprintUpsert(testObj3, 'Orientation and Precourse Review', 'git');
+// sprintUpsert(testObj3, 'Orientation and Precourse Review', ['git']);
 // console.log('testObj3 ', testObj3);
 
 
@@ -86,30 +117,4 @@ Flag: 9,
 Sprint: 10,
 Tag: 12
 
-
-w** = {
-  totals: {
-    tagName1: {
-      total: q,
-      red: q,
-      yel: q,
-      grn: q,
-    },
-    tagName2: {
-      total: q,
-      red: q,
-      yel: q,
-      grn: q,
-    },
-  },
-  sprintName1: {
-    tagName: {
-      total: q,
-      red: q,
-      yel: q,
-      grn: q,
-    }
-  },
-  sprintName2*: {...}
-}
 */
