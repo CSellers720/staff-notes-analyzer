@@ -23,6 +23,16 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
 
   const sprintUpsert = (object, sprint, tags) => {
     for (tag of tags) {
+      //check if tag exists in tags array
+      const tagsArrayIndex = object.tags.findIndex((el) => el.name === tag);
+      if(tagsArrayIndex !== -1) {
+        //if yes, total++
+        object.tags[tagsArrayIndex].total++;
+      } else {
+        //if not, create it with tag object with total of 1
+        object.tags.push({ name: tag, total: 1 });
+      }
+
       //check to see if sprint is key of object
       if(object[sprint]) {
         //if yes, check if tag exists in the sprint array
