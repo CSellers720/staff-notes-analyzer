@@ -15,6 +15,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
       const newRow = allResults[i].split('\t');
       //check if the row's week matches const week
       if(newRow[4].search(week) !== -1) {
+        //pass in
         sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
       }
     }
@@ -25,6 +26,8 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     console.log('an error occurred ', err);
   });
 
+  //takes in the output Object, a rows sprint and tags
+  //adds the sprint and tags to the output object
   const sprintUpsert = (object, sprint, tags) => {
     for (tag of tags) {
       if (tag !== 'nothing-to-report') {
@@ -67,7 +70,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
         // console.log('compare: ', a.total > b.total);
         return b.total - a.total;
       });
-      //set array length
+      //set array length to remove tags beyond the max
       if(key === 'tags') {
         object[key].length = (object[key].length < maxTagsInTags) ? object[key].length : maxTagsInTags;
       } else {
