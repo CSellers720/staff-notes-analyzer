@@ -4,18 +4,21 @@ const fs = require('fs');
 const week = /^W02/;
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
+const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
 
 var outputObj = { tags: [] };
 
 fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   .then((results) => {
     let allResults = results.toString().split('\r');
-    for (var i = 1; i < allResults.length; i++) {
+    for (var i = 230; i < 236; i++) {
       //split each row
       const newRow = allResults[i].split('\t');
-      //check if the row's week matches const week
-      if(newRow[4].search(week) !== -1) {
-        //pass in
+      console.log('newRow: ', newRow);
+      //check if the row's week matches the target week
+      // and if the type of interaction is not on the exclusion list
+      if(isValidTicket(newRow)) {
+        //add tag count to outputObj in the appropriate place
         sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
       }
     }
@@ -25,6 +28,13 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   .catch((err) => {
     console.log('an error occurred ', err);
   });
+
+  //checks whether a ticket meets the filter conditions
+  const isValidTicket = (row) => {
+    const isValidWeek = row[4].search(week) !== -1;
+    const isInvalidInteraction = interactionsToExclude.includes(row[5]);
+    return isValidWeek && !isInvalidInteraction;
+  }
 
   //takes in the output Object, a rows sprint and tags
   //adds the sprint and tags to the output object
