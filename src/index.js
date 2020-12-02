@@ -5,7 +5,7 @@ const week = /^W02/;
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
-const sprintsToExclude = ['Accountability'];
+const sprintsToExclude = ['Accountability', 'Other'];
 
 var outputObj = { tags: [] };
 
