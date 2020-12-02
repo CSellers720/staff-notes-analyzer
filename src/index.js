@@ -5,16 +5,17 @@ const week = /^W02/;
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
+const sprintsToExclude = ['Accountability'];
 
 var outputObj = { tags: [] };
 
 fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   .then((results) => {
     let allResults = results.toString().split('\r');
-    for (var i = 230; i < 236; i++) {
+    for (var i = 1; i < allResults.length; i++) {
       //split each row
       const newRow = allResults[i].split('\t');
-      console.log('newRow: ', newRow);
+      //console.log('newRow: ', newRow);
       //check if the row's week matches the target week
       // and if the type of interaction is not on the exclusion list
       if(isValidTicket(newRow)) {
@@ -33,7 +34,8 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   const isValidTicket = (row) => {
     const isValidWeek = row[4].search(week) !== -1;
     const isInvalidInteraction = interactionsToExclude.includes(row[5]);
-    return isValidWeek && !isInvalidInteraction;
+    const isInvalidSprint = sprintsToExclude.includes(row[10]);
+    return isValidWeek && !isInvalidInteraction && !isInvalidSprint;
   }
 
   //takes in the output Object, a rows sprint and tags
@@ -75,9 +77,6 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     for (const key in object) {
       //run sort on each array
       object[key].sort((a, b) => {
-        // console.log('a.name', a.name, 'a.total: ', a.total);
-        // console.log('b.name', b.name, 'b.total: ', b.total);
-        // console.log('compare: ', a.total > b.total);
         return b.total - a.total;
       });
       //set array length to remove tags beyond the max
