@@ -4,8 +4,8 @@ const fs = require('fs');
 const week = /^W02/;
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
-const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
-const sprintsToExclude = ['Accountability', 'Other'];
+const interactionsToExclude = [];  //['Tactical Discussion', 'Accountability', 'Whiteboarding'];
+const sprintsToExclude = []; //['Accountability', 'Other'];
 
 var outputObj = { tags: [] };
 
@@ -25,6 +25,10 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     }
     sortOutput(outputObj);
     console.log(outputObj);
+    return fs.promises.writeFile(path.resolve(__dirname, '../data/sn-w02.json'), JSON.stringify(outputObj, null, 2));
+  })
+  .then(() => {
+    console.log('File written successfully');
   })
   .catch((err) => {
     console.log('an error occurred ', err);
