@@ -1,11 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 
-const week = /^W02/;
+const week = /^W03/;
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
-const interactionsToExclude = [];  //['Tactical Discussion', 'Accountability', 'Whiteboarding'];
-const sprintsToExclude = []; //['Accountability', 'Other'];
+const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
+const sprintsToExclude = ['Accountability', 'Other'];
 
 var outputObj = { tags: [] };
 
@@ -25,7 +25,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     }
     sortOutput(outputObj);
     console.log(outputObj);
-    return fs.promises.writeFile(path.resolve(__dirname, '../data/sn-w02.json'), JSON.stringify(outputObj, null, 2));
+    return fs.promises.writeFile(path.resolve(__dirname, '../data/sn-w03.json'), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
     console.log('File written successfully');
@@ -46,7 +46,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
   //adds the sprint and tags to the output object
   const sprintUpsert = (object, sprint, tags) => {
     for (tag of tags) {
-      if (tag !== 'nothing-to-report') {
+      if (tag !== 'no-relevant-tags') {
         //check if tag exists in tags array
         const tagsArrayIndex = object.tags.findIndex((el) => el.name === tag);
         if(tagsArrayIndex !== -1) {
