@@ -116,12 +116,10 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
       for (var i = 0; i < object[sprint].length; i++) {
         let totalProp = sprint === 'tags' ? 'allSprints' : sprint;
         //divide the number of tags by the total number of tickets in the sprint
-        let percent = object[sprint][i]['total'] / ticketTotals[totalProp];
-        console.log('percent1: ', percent);
-        percent = percent.toPrecision(1);
-        console.log('percent2: ', percent);
+        let percent = object[sprint][i]['total'] / ticketTotals[totalProp] * 100;
+        percent = percent.toPrecision(4);
         //add this number as a property to each tag object
-        object[sprint][i].percent = percent;
+        object[sprint][i].percent = percent + '%';
       }
     }
   }
