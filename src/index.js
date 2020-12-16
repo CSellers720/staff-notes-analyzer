@@ -1,16 +1,20 @@
 const path = require('path');
 const fs = require('fs');
 
-const week = /^W03/;
+const week = /^W04/
+// do not include file extensions in file names
+// make sure inputFile is of format .tsv
+const inputFileName = 'tickets';
+const outputFileName = 'sn-w05';
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
-const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins']];
+const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins'];
 const tagsToExclude = ['no-relevant-tags', 'react'];
 
 var outputObj = { tags: [] };
 
-fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
+fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
   .then((results) => {
     let allResults = results.toString().split('\r');
     for (var i = 1; i < allResults.length; i++) {
@@ -26,7 +30,7 @@ fs.promises.readFile(path.resolve(__dirname, '../data/sn-w02.tsv'))
     }
     sortOutput(outputObj);
     console.log(outputObj);
-    return fs.promises.writeFile(path.resolve(__dirname, '../data/sn-w03.json'), JSON.stringify(outputObj, null, 2));
+    return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
     console.log('File written successfully');
