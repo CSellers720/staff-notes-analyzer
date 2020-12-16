@@ -6,8 +6,8 @@ const week = /^W04/
 // make sure inputFile is of format .tsv
 const inputFileName = 'tickets';
 const outputFileName = 'w05output';
-const maxTagsInSprint = 10;
-const maxTagsInTags = 5;
+const maxTagsInSprint = 1;
+const maxTagsInTags = 1;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
 const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins'];
 const tagsToExclude = ['no-relevant-tags', 'react'];
@@ -31,6 +31,7 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
       }
     }
     sortOutput(outputObj);
+    addPercentages(outputObj);
     console.log(outputObj);
     console.log(ticketTotals);
     return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
@@ -103,6 +104,24 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
         object[key].length = (object[key].length < maxTagsInTags) ? object[key].length : maxTagsInTags;
       } else {
         object[key].length = (object[key].length < maxTagsInSprint) ? object[key].length : maxTagsInSprint;
+      }
+    }
+  }
+
+  //adds percentages to the output object
+  const addPercentages = (object) => {
+    //iterate through the sprints in the output object
+    for (sprint in object) {
+      //iterate through the tags in each sprint
+      for (var i = 0; i < object[sprint].length; i++) {
+        let totalProp = sprint === 'tags' ? 'allSprints' : sprint;
+        //divide the number of tags by the total number of tickets in the sprint
+        let percent = object[sprint][i]['total'] / ticketTotals[totalProp];
+        console.log('percent1: ', percent);
+        percent = percent.toPrecision(1);
+        console.log('percent2: ', percent);
+        //add this number as a property to each tag object
+        object[sprint][i].percent = percent;
       }
     }
   }
