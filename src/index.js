@@ -6,13 +6,14 @@ const week = /^W04/
 // make sure inputFile is of format .tsv
 const inputFileName = 'tickets';
 const outputFileName = 'w05output';
-const maxTagsInSprint = 5;
-const maxTagsInTags = 10;
+const maxTagsInSprint = 10;
+const maxTagsInTags = 5;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
 const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins'];
 const tagsToExclude = ['no-relevant-tags', 'react'];
 
 var outputObj = { tags: [] };
+var ticketTotals = {allSprints: 0};
 
 fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
   .then((results) => {
@@ -23,12 +24,15 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
       //console.log('newRow: ', newRow);
       //check if the row matches the filter conditions (week, interactions, sprints, tags)
       if(isValidTicket(newRow)) {
+        //increment the global ticket count
+        ticketTotals.allSprints++
         //add tag count to outputObj in the appropriate place
         sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
       }
     }
     sortOutput(outputObj);
     console.log(outputObj);
+    console.log(ticketTotals);
     return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
@@ -74,9 +78,14 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
             //if not, create it with tag object with total of 1
             object[sprint].push({ name: tag, total: 1 });
           }
+          //increment running tag count for the current sprint
+          ticketTotals[sprint]++;
+
         } else {
           //create new sprint object with total prop = 1
           object[sprint] = [{ name: tag, total: 1 }];
+          //create a new sprint count in the totals object
+          ticketTotals[sprint] = 1;
         }
       }
     }
