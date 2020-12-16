@@ -5,7 +5,7 @@ const week = /^W04/
 // do not include file extensions in file names
 // make sure inputFile is of format .tsv
 const inputFileName = 'tickets';
-const outputFileName = 'sn-w05';
+const outputFileName = 'w05output';
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
@@ -21,8 +21,7 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
       //split each row
       const newRow = allResults[i].split('\t');
       //console.log('newRow: ', newRow);
-      //check if the row's week matches the target week
-      // and if the type of interaction is not on the exclusion list
+      //check if the row matches the filter conditions (week, interactions, sprints, tags)
       if(isValidTicket(newRow)) {
         //add tag count to outputObj in the appropriate place
         sprintUpsert(outputObj, newRow[10], newRow[12].split(' '));
@@ -51,6 +50,7 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
   //adds the sprint and tags to the output object
   const sprintUpsert = (object, sprint, tags) => {
     for (tag of tags) {
+      //check if current tag is to be excluded
       const isInvalidTag = tagsToExclude.includes(tag);
       if (!isInvalidTag) {
         //check if tag exists in tags array
@@ -63,7 +63,7 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
           object.tags.push({ name: tag, total: 1 });
         }
 
-        //check to see if sprint is key of object
+        //check to see if the sprint is already a key of the output object
         if(object[sprint]) {
           //if yes, check if tag exists in the sprint array
           const tagIndex = object[sprint].findIndex((el) => el.name === tag);
