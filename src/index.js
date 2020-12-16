@@ -6,8 +6,8 @@ const week = /^W04/
 // make sure inputFile is of format .tsv
 const inputFileName = 'tickets';
 const outputFileName = 'w05output';
-const maxTagsInSprint = 1;
-const maxTagsInTags = 1;
+const maxTagsInSprint = 5;
+const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
 const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins'];
 const tagsToExclude = ['no-relevant-tags', 'react'];
@@ -33,7 +33,6 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
     sortOutput(outputObj);
     addPercentages(outputObj);
     console.log(outputObj);
-    console.log(ticketTotals);
     return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
