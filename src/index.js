@@ -1,16 +1,16 @@
 const path = require('path');
 const fs = require('fs');
 
-const week = /^W02/
+const week = /^W05/
 // do not include file extensions in file names
 // make sure inputFile is of format .tsv
 const inputFileName = 'hrr50Tickets';
-const outputFileName = 'w02outputHRR50';
+const outputFileName = 'w05output_HRR50';
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
 const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding', 'Office Hours'];
 const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins', 'Self-Assessment'];
-const tagsToExclude = ['no-relevant-tags'];
+const tagsToExclude = ['no-relevant-tags', 'diagram/schema'];
 
 var outputObj = { tags: [] };
 var ticketTotals = {allSprints: 0};
@@ -32,7 +32,7 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
     sortOutput(outputObj);
     addPercentages(outputObj);
     const alphabetizedOutput = alphabetize(outputObj);
-    console.log('output:', alphabetizedOutput);
+    console.log(alphabetizedOutput);
     return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
