@@ -1,16 +1,16 @@
 const path = require('path');
 const fs = require('fs');
 
-const week = /^W04/
+const week = /^W02/
 // do not include file extensions in file names
 // make sure inputFile is of format .tsv
-const inputFileName = 'tickets';
-const outputFileName = 'w05output';
+const inputFileName = 'hrr50Tickets';
+const outputFileName = 'w02outputHRR50';
 const maxTagsInSprint = 5;
 const maxTagsInTags = 10;
-const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding'];
-const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins'];
-const tagsToExclude = ['no-relevant-tags', 'react'];
+const interactionsToExclude = ['Tactical Discussion', 'Accountability', 'Whiteboarding', 'Office Hours'];
+const sprintsToExclude = ['Accountability', 'Other', 'Soft Skills/Checkins', 'Self-Assessment'];
+const tagsToExclude = ['no-relevant-tags'];
 
 var outputObj = { tags: [] };
 var ticketTotals = {allSprints: 0};
@@ -21,7 +21,6 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
     for (var i = 1; i < allResults.length; i++) {
       //split each row
       const newRow = allResults[i].split('\t');
-      //console.log('newRow: ', newRow);
       //check if the row matches the filter conditions (week, interactions, sprints, tags)
       if(isValidTicket(newRow)) {
         //increment the global ticket count
@@ -32,7 +31,8 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
     }
     sortOutput(outputObj);
     addPercentages(outputObj);
-    console.log(outputObj);
+    const alphabetizedOutput = alphabetize(outputObj);
+    console.log('output:', alphabetizedOutput);
     return fs.promises.writeFile(path.resolve(__dirname, `../data/${outputFileName}.json`), JSON.stringify(outputObj, null, 2));
   })
   .then(() => {
@@ -121,6 +121,21 @@ fs.promises.readFile(path.resolve(__dirname, `../data/${inputFileName}.tsv`))
         object[sprint][i].percent = percent + '%';
       }
     }
+  }
+
+  //takes in an object and sorts its keys alphabetically
+  //leaves 'tags' as first key
+  //returns a new object
+  const alphabetize = (unsorted) => {
+    return Object.keys(unsorted).sort().reduce(
+      (accumulator, key) => {
+        if(key !== 'tags') {
+          accumulator[key] = unsorted[key];
+        }
+        return accumulator;
+      },
+      { tags: unsorted.tags }
+    )
   }
 
   /*
